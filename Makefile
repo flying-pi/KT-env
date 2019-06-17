@@ -25,5 +25,17 @@ clone_image_repo: .dir_info
 	touch .dir_info/edx_image_dir
 	echo $(edx_image_dir) > .dir_info/edx_image_dir
 
+
+build_base_edx: .build/images/base_edx
+
+
+.build/images/base_edx: .build
+	docker build -t kt/base_edx:v-10.0 $(edx_image_dir)/edx/v-10.0/
+
+
 .dir_info:
 	mkdir -p  .dir_info
+
+.build:
+	mkdir .build
+	mkdir .build/images
