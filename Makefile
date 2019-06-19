@@ -25,13 +25,20 @@ clone_image_repo: .dir_info
 	touch .dir_info/edx_image_dir
 	echo $(edx_image_dir) > .dir_info/edx_image_dir
 
-
 build_base_edx: .build/images/base_edx
 
 
+build_edx_runtime: .build/images/edx_runtime
+run_edex_runtime: build_edx_runtime
+	docker run -it -v $$(pwd)$(edx_runtime_dir)/:/runtime_app -p 5937:5937 kt/edx_runtime:v-0.0.1
+
+.build/images/edx_runtime: .build .build/images/base_edx
+	docker build -t kt/edx_runtime:v-0.0.1 -f $(edx_runtime_dir)/docker/Dokcerfile.python2.dev $(edx_runtime_dir)
+	touch $@
+
 .build/images/base_edx: .build
 	docker build -t kt/base_edx:v-10.0 $(edx_image_dir)/edx/v-10.0/
-
+	touch $@
 
 .dir_info:
 	mkdir -p  .dir_info
@@ -39,3 +46,8 @@ build_base_edx: .build/images/base_edx
 .build:
 	mkdir .build
 	mkdir .build/images
+
+torrr:
+	echo $$(pwd)$(edx_runtime_dir)
+
+# TODO move imagenames to the variable
